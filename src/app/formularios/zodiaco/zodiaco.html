@@ -1,0 +1,124 @@
+
+<h1 style="text-align: center;">Zodiaco Chino</h1>
+
+<div style="display: flex; justify-content: center;
+            gap: 50px; padding: 30px; flex-wrap: wrap;">
+
+  <!-- FORMULARIO -->
+  <div style="width: 350px;">
+
+    <h3>Datos Personales</h3>
+
+    <form [formGroup]="formulario">
+
+      <!-- Nombre -->
+      <label>Nombre:</label><br>
+      <input type="text" formControlName="nombre"
+             style="width: 95%; border: 1px solid black;
+                    padding: 8px; margin-bottom: 12px;">
+      <br>
+
+      <!-- Apellido paterno -->
+      <label>Apellido paterno:</label><br>
+      <input type="text" formControlName="paterno"
+             style="width: 95%; border: 1px solid black;
+                    padding: 8px; margin-bottom: 12px;">
+      <br>
+
+      <!-- Apellido materno -->
+      <label>Apellido materno:</label><br>
+      <input type="text" formControlName="materno"
+             style="width: 95%; border: 1px solid black;
+                    padding: 8px; margin-bottom: 12px;">
+      <br>
+
+      <!-- Fecha de nacimiento -->
+      <h3>Fecha de nacimiento</h3>
+
+      <div style="display: flex; gap: 10px;">
+
+        <div>
+          <label>Día:</label><br>
+          <input type="number" formControlName="dia"
+                 min="1" max="31"
+                 style="width: 65px; border: 1px solid black;
+                        padding: 8px;">
+        </div>
+
+        <div>
+          <label> Mes:</label><br>
+          <input type="number" formControlName="mes"
+                 min="1" max="12"
+                 style="width: 65px; border: 1px solid black;
+                        padding: 8px;">
+        </div>
+
+        <div>
+          <label>Año:</label><br>
+          <input type="number" formControlName="anio"
+                 style="width: 90px; border: 1px solid black;
+                        padding: 8px;">
+        </div>
+
+      </div>
+
+      <!-- Sexo -->
+      <h3>Sexo</h3>
+
+      <input type="radio" formControlName="sexo"
+             value="Masculino">
+      <label>Masculino</label>
+      <br>
+
+      <input type="radio" formControlName="sexo"
+             value="Femenino">
+      <label>Femenino</label>
+
+      <br><br>
+
+      <!-- Botón imprimir -->
+      <button type="button" (click)="imprimir()"
+              style="background-color: #2874A6;
+                     color: white;
+                     border: 1px solid #1B4F72;
+                     padding: 12px 35px;
+                     border-radius: 5px;
+                     cursor: pointer;
+                     font-size: 16px;">
+        Imprimir
+      </button>
+
+    </form>
+
+    <!-- Mensaje de error -->
+    <p style="color: red;">{{ mensaje }}</p>
+
+  </div>
+
+  <!-- RESULTADOS -->
+  <div style="border-left: 3px solid black;
+              padding-left: 40px;
+              text-align: center;
+              width: 300px;">
+
+    <div *ngIf="mostrarResultado">
+
+      <h3>Hola {{ nombreCompleto }}</h3>
+
+      <h3>Tienes {{ edad }} años</h3>
+
+      <h3>Tu signo zodiacal es:</h3>
+
+      <!-- Imagen del animal -->
+      <img [src]="imagen"
+           alt="Signo del zodiaco chino"
+           style="width: 150px; height: 150px;
+                  object-fit: contain;">
+
+      <h3>Es {{ signo }}</h3>
+
+    </div>
+
+  </div>
+
+</div>

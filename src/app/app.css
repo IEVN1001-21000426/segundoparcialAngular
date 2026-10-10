@@ -1,0 +1,3 @@
+@source "../node_modules/flowbite";
+@plugin "flowbite/plugin";
+@import "flowbite/src/themes/default";
