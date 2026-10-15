@@ -1,7 +1,21 @@
 
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
+
+// Estructura de los datos que guardaremos
+interface RegistroZodiaco {
+  nombre: string;
+  paterno: string;
+  materno: string;
+  sexo: string;
+  edad: number;
+  signo: string;
+  dia: string;
+  mes: string;
+  anio: string;
+}
+
 
 @Component({
   selector: 'app-zodiaco',
@@ -10,7 +24,7 @@ import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
   templateUrl: './zodiaco.html'
 })
 
-export class Zodiaco {
+export class Zodiaco implements OnInit {
 
   // Formulario reactivo
   formulario = new FormGroup({
@@ -23,13 +37,21 @@ export class Zodiaco {
     sexo: new FormControl('')
   });
 
-  // Variables para mostrar los resultados
+  // Variables de los resultados
   nombreCompleto = '';
   edad = 0;
   signo = '';
   imagen = '';
   mostrarResultado = false;
   mensaje = '';
+
+  // Variables del registro
+  registros: RegistroZodiaco[] = [];
+  indiceEdicion = -1;
+  mensajeRegistro = '';
+
+  // Controlar qué vista se muestra
+  vistaActual = 'formulario';
 
   // Animales del zodiaco chino
   animales = [
@@ -38,19 +60,32 @@ export class Zodiaco {
     'Dragón', 'Serpiente', 'Caballo', 'Cabra'
   ];
 
-  imprimir() {
 
-    // Obtener los datos del formulario
+  // 1. Cargar los registros al iniciar
+  ngOnInit(): void {
+    this.cargarRegistros();
+  }
+
+
+  // 2. Calcular edad y signo zodiacal
+  imprimir(): void {
+
     const datos = this.formulario.value;
 
     const dia = Number(datos.dia);
     const mes = Number(datos.mes);
     const anio = Number(datos.anio);
 
-    // Validar que todos los campos estén llenos
-    if (!datos.nombre || !datos.paterno ||
-        !datos.materno || !datos.sexo ||
-        !datos.dia || !datos.mes || !datos.anio) {
+    // Validar los campos
+    if (
+      !datos.nombre?.trim() ||
+      !datos.paterno?.trim() ||
+      !datos.materno?.trim() ||
+      !datos.sexo ||
+      !datos.dia ||
+      !datos.mes ||
+      !datos.anio
+    ) {
 
       this.mensaje = 'Por favor llena todos los campos';
       this.mostrarResultado = false;
@@ -60,13 +95,16 @@ export class Zodiaco {
     // Obtener la fecha actual
     const hoy = new Date();
 
-    // Verificar que la fecha sea válida
+    // Comprobar la fecha de nacimiento
     const nacimiento = new Date(anio, mes - 1, dia);
 
-    if (nacimiento.getFullYear() !== anio ||
-        nacimiento.getMonth() !== mes - 1 ||
-        nacimiento.getDate() !== dia ||
-        nacimiento > hoy) {
+    if (
+      anio <= 0 ||
+      nacimiento.getFullYear() !== anio ||
+      nacimiento.getMonth() !== mes - 1 ||
+      nacimiento.getDate() !== dia ||
+      nacimiento > hoy
+    ) {
 
       this.mensaje = 'Fecha de nacimiento inválida';
       this.mostrarResultado = false;
@@ -75,37 +113,222 @@ export class Zodiaco {
 
     // Juntar nombre y apellidos
     this.nombreCompleto =
-      datos.nombre + ' ' +
-      datos.paterno + ' ' +
-      datos.materno;
+      datos.nombre.trim() + ' ' +
+      datos.paterno.trim() + ' ' +
+      datos.materno.trim();
 
-    // Calcular edad
+    // Calcular la edad
     this.edad = hoy.getFullYear() - anio;
 
-    if (hoy.getMonth() + 1 < mes ||
-       (hoy.getMonth() + 1 === mes &&
-        hoy.getDate() < dia)) {
+    if (
+      hoy.getMonth() + 1 < mes ||
+      (hoy.getMonth() + 1 === mes &&
+      hoy.getDate() < dia)
+    ) {
       this.edad--;
     }
 
-    // Calcular signo del zodiaco chino
+    // Calcular signo chino
     const posicion = anio % 12;
 
     this.signo = this.animales[posicion];
 
-    // Convertir el signo a minúsculas
+    // Preparar imagen
     let nombreImagen = this.signo.toLowerCase();
 
-    // Corregir el nombre del dragón
     if (this.signo === 'Dragón') {
       nombreImagen = 'dragon';
     }
 
-    // Mostrar la imagen JPG
     this.imagen = 'img/' + nombreImagen + '.jpg';
 
-    // Mostrar resultados
+    // Mostrar resultado
     this.mensaje = '';
     this.mostrarResultado = true;
+
   }
+
+
+  // 3. Guardar o actualizar registros
+  guardarRegistro(): void {
+
+    // Calcular la edad y validar primero
+    this.imprimir();
+
+    if (!this.mostrarResultado) {
+      return;
+    }
+
+    const datos = this.formulario.getRawValue();
+
+    // Crear registro
+    
+const persona: RegistroZodiaco = {
+  nombre: (datos.nombre ?? '').trim(),
+  paterno: (datos.paterno ?? '').trim(),
+  materno: (datos.materno ?? '').trim(),
+  sexo: datos.sexo ?? '',
+  edad: this.edad,
+  signo: this.signo,
+  dia: datos.dia ?? '',
+  mes: datos.mes ?? '',
+  anio: datos.anio ?? ''
+};
+
+
+    if (this.indiceEdicion !== -1) {
+
+      // Actualizar el registro seleccionado
+      this.registros[this.indiceEdicion] = persona;
+
+      this.mensajeRegistro =
+        'Registro actualizado correctamente';
+
+    } else {
+
+      // Agregar una persona nueva
+      this.registros.push(persona);
+
+      this.mensajeRegistro =
+        'Persona registrada correctamente';
+
+    }
+
+    // Guardar información
+    localStorage.setItem(
+      'registrosZodiaco',
+      JSON.stringify(this.registros)
+    );
+
+    // Limpiar formulario
+    this.limpiarCampos();
+
+    // Abrir la vista de registros
+    this.vistaActual = 'registros';
+
+  }
+
+
+  // 4. Editar una persona
+  editarRegistro(index: number): void {
+
+    const persona = this.registros[index];
+
+    // Colocar los datos en el formulario
+    this.formulario.patchValue({
+      nombre: persona.nombre,
+      paterno: persona.paterno,
+      materno: persona.materno,
+      dia: persona.dia,
+      mes: persona.mes,
+      anio: persona.anio,
+      sexo: persona.sexo
+    });
+
+    this.indiceEdicion = index;
+
+    // Ocultar el resultado anterior
+    this.mostrarResultado = false;
+    this.mensaje = '';
+
+    // Regresar al formulario para editar
+    this.vistaActual = 'formulario';
+
+  }
+
+
+  // 5. Recuperar registros guardados
+  cargarRegistros(): void {
+
+    const datos = localStorage.getItem('registrosZodiaco');
+
+    if (datos) {
+
+      try {
+        const guardados = JSON.parse(datos);
+
+        this.registros = Array.isArray(guardados)
+          ? guardados
+          : [];
+
+      } catch {
+        this.registros = [];
+      }
+
+    } else {
+      this.registros = [];
+    }
+
+  }
+
+
+  // 6. Eliminar una persona
+  eliminarRegistro(index: number): void {
+
+    const confirmar = confirm(
+      '¿Deseas eliminar este registro?'
+    );
+
+    if (confirmar) {
+
+      this.registros.splice(index, 1);
+
+      localStorage.setItem(
+        'registrosZodiaco',
+        JSON.stringify(this.registros)
+      );
+
+      this.limpiarCampos();
+
+      this.mensajeRegistro =
+        'Registro eliminado correctamente';
+
+    }
+
+  }
+
+
+  // 7. Limpiar el formulario
+  limpiarCampos(): void {
+
+    this.formulario.reset({
+      nombre: '',
+      paterno: '',
+      materno: '',
+      dia: '',
+      mes: '',
+      anio: '',
+      sexo: ''
+    });
+
+    this.nombreCompleto = '';
+    this.edad = 0;
+    this.signo = '';
+    this.imagen = '';
+
+    this.mostrarResultado = false;
+    this.mensaje = '';
+
+    this.indiceEdicion = -1;
+
+  }
+
+
+  // 8. Abrir vista de registros
+  verRegistros(): void {
+
+    this.cargarRegistros();
+
+    this.vistaActual = 'registros';
+
+  }
+
+
+  // 9. Regresar al formulario
+  volverFormulario(): void {
+
+    this.vistaActual = 'formulario';
+
+  }
+
 }

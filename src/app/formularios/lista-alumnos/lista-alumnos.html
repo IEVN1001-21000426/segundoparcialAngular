@@ -1,0 +1,247 @@
+
+<div class="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow">
+
+  <h1 class="text-3xl font-bold text-gray-900 mb-6">
+    Lista Alumnos
+  </h1>
+
+  <form [formGroup]="formulario">
+
+    <div class="mb-5">
+
+      <label
+        for="matricula"
+        class="block mb-2 text-sm font-medium text-gray-900">
+        Matricula
+      </label>
+
+      <input
+        type="text"
+        id="matricula"
+        name="matricula"
+        formControlName="matricula"
+        required
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+               focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+        placeholder="Pon tu matricula">
+
+    </div>
+
+    <div class="mb-5">
+
+      <label
+        for="name"
+        class="block mb-2 text-sm font-medium text-gray-900">
+        Nombre
+      </label>
+
+      <input
+        type="text"
+        id="name"
+        name="name"
+        formControlName="nombre"
+        required
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+               focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+        placeholder="Ingresa tu nombre">
+
+    </div>
+
+    <div class="mb-5">
+
+      <label
+        for="correo"
+        class="block mb-2 text-sm font-medium text-gray-900">
+        Correo
+      </label>
+
+      <input
+        type="text"
+        id="correo"
+        name="correo"
+        formControlName="correo"
+        required
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+               focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+        placeholder="Ingresa tu correo">
+
+    </div>
+
+    <div class="mb-5">
+
+      <label
+        for="materia"
+        class="block mb-2 text-sm font-medium text-gray-900">
+        Materia
+      </label>
+
+      <input
+        type="text"
+        id="materia"
+        name="materia"
+        formControlName="materia"
+        required
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+               focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+        placeholder="Ingresa tu materia">
+
+    </div>
+
+    
+<div class="flex justify-center gap-4 mt-5">
+
+  <button
+    type="button"
+    (click)="muestraAlumnos()"
+    class="text-white bg-blue-700 hover:bg-blue-800
+           focus:ring-4 focus:outline-none focus:ring-blue-300
+           font-medium rounded-lg text-sm px-5 py-2.5">
+
+    Registrar
+
+  </button>
+
+  <button
+    type="button"
+    (click)="limpiarCampos()"
+    class="text-white bg-gray-600 hover:bg-gray-700
+           focus:ring-4 focus:outline-none focus:ring-gray-300
+           font-medium rounded-lg text-sm px-5 py-2.5">
+
+    Limpiar campos
+
+  </button>
+
+</div>
+
+
+  </form>
+
+
+  <div class="max-w-6xl mx-auto mt-8">
+
+    <h2 class="mb-4 text-2xl font-bold text-gray-900">
+      Lista de alumnos
+    </h2>
+
+    <div class="flex justify-center mt-5 mb-5">
+
+      <button
+        type="button"
+        (click)="cargarAlumnos()"
+        class="text-white bg-blue-700 hover:bg-blue-800
+               focus:ring-4 focus:outline-none focus:ring-blue-300
+               font-medium rounded-lg text-sm px-5 py-2.5">
+
+        Cargar alumnos
+
+      </button>
+
+    </div>
+
+
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+
+      <table class="w-full text-sm text-left text-gray-500">
+
+        <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+
+          <tr>
+
+            <th scope="col" class="px-6 py-3">
+              Matrícula
+            </th>
+
+            <th scope="col" class="px-6 py-3">
+              Nombre
+            </th>
+
+            <th scope="col" class="px-6 py-3">
+              Correo
+            </th>
+
+            <th scope="col" class="px-6 py-3">
+              Materia
+            </th>
+
+            <th scope="col" class="px-6 py-3">
+              Acciones
+            </th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          <tr
+            *ngFor="let alumno1 of alumnos; let i = index"
+            class="bg-white border-b border-gray-200 hover:bg-gray-50">
+
+            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+              {{ alumno1.matricula }}
+            </td>
+
+            <td class="px-6 py-4">
+              {{ alumno1.nombre }}
+            </td>
+
+            <td class="px-6 py-4">
+              {{ alumno1.correo }}
+            </td>
+
+            <td class="px-6 py-4">
+              {{ alumno1.materia }}
+            </td>
+
+            <td class="px-6 py-4">
+
+              <div class="flex gap-2">
+
+                <button
+                  type="button"
+                  (click)="eliminarAlumno(i)"
+                  class="px-4 py-2 text-sm font-medium text-white
+                         bg-red-600 rounded-lg hover:bg-red-700
+                         focus:ring-4 focus:outline-none focus:ring-red-300">
+
+                  Eliminar
+
+                </button>
+
+                <button
+                  type="button"
+                  (click)="editarAlumno(i)"
+                  class="px-4 py-2 text-sm font-medium text-white
+                         bg-green-600 rounded-lg hover:bg-green-700
+                         focus:ring-4 focus:outline-none focus:ring-green-300">
+
+                  Editar
+
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    <div
+      *ngIf="alumnos.length === 0"
+      class="p-4 mt-4 text-sm text-gray-800 rounded-lg bg-gray-100"
+      role="alert">
+
+      <span class="font-medium">Información:</span>
+      No hay alumnos registrados.
+
+    </div>
+
+  </div>
+
+</div>
